@@ -1,0 +1,14 @@
+{
+   "results": [
+      {
+         "alternatives": [
+            {
+               "confidence": 0.91,
+               "transcript": "y acabamos de conocer el premio de teatro del valle enclava en uno de los más importantes de la escena española nuestro compañero rubén nevado está siguiendo la gana nos vamos hasta el teatro real de madrid rubén buenas noches "
+            }
+         ],
+         "final": true
+      }
+   ],
+   "result_index": 0
+}

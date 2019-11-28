@@ -1,0 +1,7 @@
+---
+applications:
+- name: transcribir
+  random-route: true
+  path: target/transcribir-1.0-SNAPSHOT.war
+  memory: 256M
+  instances: 1

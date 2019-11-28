@@ -1,0 +1,37 @@
+/target
+/.m2
+
+/*.iml
+
+/.classpath
+/.project
+/.settings
+
+/caches
+/local.properties
+.*.swp
+.DS_Store
+/src/main/liberty/config/server.env
+
+src/main/liberty/config/server.env
+src/main/resources/localdev-config.json
+src/main/resources/credenciales.txtaarons-mbp:services aaron$ vi .gitignore
+aarons-mbp:services aaron$ cat .gitignore
+/target
+/.m2
+
+/*.iml
+
+/.classpath
+/.project
+/.settings
+
+/caches
+/local.properties
+.*.swp
+.DS_Store
+/src/main/liberty/config/server.env
+
+src/main/liberty/config/server.env
+src/main/resources/localdev-config.json
+src/main/resources/credenciales.txt

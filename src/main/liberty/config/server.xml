@@ -1,0 +1,43 @@
+<server description="Sample Liberty server">
+
+    <featureManager>
+        <feature>microprofile-1.2</feature>
+        <feature>jndi-1.0</feature>
+        <feature>localConnector-1.0</feature>
+        <feature>transportSecurity-1.0</feature>
+        <feature>passwordUtilities-1.0</feature>
+    </featureManager>
+
+
+    <httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}"
+      id="defaultHttpEndpoint" host="*" />
+
+    <ssl id="defaultSSLConfig"
+         keyStoreRef="defaultKeyStore"
+         trustStoreRef="defaultTrustStore" />
+
+    <keyStore id="defaultKeyStore"
+              location="key.jks"
+              type="JKS"
+              password="transcribir" />
+
+    <!-- Automatically expand WAR files and EAR files -->
+    <applicationManager autoExpand="true"/>
+
+    <applicationMonitor pollingRate="1000ms"/>
+
+    <application context-root="transcribir" type="war" id="transcribir"
+                 location="transcribir-1.0-SNAPSHOT.war" name="transcribir">
+    </application>
+
+    <jndiEntry value='"mongodb+srv://transcrib_01:{password}@cluster0-gmcxk.mongodb.net/test?retryWrites=true|w=majority"' jndiName="mongoConnectString"/>
+    <jndiEntry value='"localhost"' jndiName="mongoHostName" />
+    <jndiEntry value="27017"            jndiName="mongoPort" />
+    <jndiEntry value='"transcrib_01"'   jndiName="mongoUserId"/>
+    <jndiEntry value='"{xor}CgopGTInbDsVOxUbFWgGJw=="'   jndiName="mongoPassword"/>
+    <jndiEntry value='"userDb"'     jndiName="userDataBase" />
+    <jndiEntry value='"users"'      jndiName="userDataCollection"/>
+    <jndiEntry value='"media"'      jndiName="mediaDataCollection"/>
+    <jndiEntry value='"local"' jndiName="environment"/>
+
+</server>
