@@ -81,12 +81,10 @@ public class DataManager {
     public boolean verificarNombreUnico(String userId) {
         List<Document> found = new ArrayList<Document>();
         try {
-            Document filterUser = new Document();
             Document credFilter = new Document();
-            credFilter.put("userId", userId);
-            filterUser.put("credentials", credFilter);
-
-            FindIterable<Document> result = mongoDb.getCollection(userCollection).find().filter(filterUser);
+            credFilter.put("credentials.userId", userId);
+            System.out.println(credFilter.toJson().toString());
+            FindIterable<Document> result = mongoDb.getCollection(userCollection).find().filter(credFilter);
 
             for (Document doc : result) {
                 found.add(doc);

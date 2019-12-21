@@ -29,7 +29,7 @@ public class RegistrationService {
 
         boolean nombreUnico = dataManager.verificarNombreUnico(user.getCredentials().getUserId());
 
-        ServerMessage serverMessage = null;
+        ServerMessage serverMessage = new ServerMessage();
         if (nombreUnico){
             user.setRole("basic");
             dataManager.guardarUsuarioNuevo(user);

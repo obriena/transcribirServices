@@ -1,25 +1,18 @@
 package com.flyingspheres.services.application.rest;
 
-import com.flyingspheres.services.application.ModelAdaptor;
 import com.flyingspheres.services.application.models.Media;
 import com.flyingspheres.services.application.models.ServerMessage;
 import com.flyingspheres.services.application.util.DataManager;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.Binary;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Path("media")
 public class MediaRetrievalService {
