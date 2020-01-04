@@ -35,3 +35,4 @@ aarons-mbp:services aaron$ cat .gitignore
 src/main/liberty/config/server.env
 src/main/resources/localdev-config.json
 src/main/resources/credenciales.txt
+docker.env

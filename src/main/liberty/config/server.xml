@@ -29,15 +29,18 @@
     <application context-root="transcribir" type="war" id="transcribir"
                  location="transcribir-1.0-SNAPSHOT.war" name="transcribir">
     </application>
-
-    <jndiEntry value='"mongodb+srv://transcrib_01:{password}@cluster0-gmcxk.mongodb.net/test?retryWrites=true|w=majority"' jndiName="mongoConnectString"/>
+    <!--
+    mongo_user - environment variable named MONGO_USER
+    mongo_password - environment variable named MONGO_PWD
+    If starting from the command line the command should be something like this:
+    mvn -DMONGO_USER=XYZ -DMONGO_PWD=ABC -DIBM_API_KEY=MNOP liberty:run
+    -->
+    <jndiEntry value='"mongodb+srv://{mongo_user}:{mongo_password}@cluster0-gmcxk.mongodb.net/test?retryWrites=true|w=majority"' jndiName="mongoConnectString"/>
     <jndiEntry value='"localhost"' jndiName="mongoHostName" />
     <jndiEntry value="27017"            jndiName="mongoPort" />
-    <jndiEntry value='"transcrib_01"'   jndiName="mongoUserId"/>
-    <jndiEntry value='"{xor}CgopGTInbDsVOxUbFWgGJw=="'   jndiName="mongoPassword"/>
     <jndiEntry value='"userDb"'     jndiName="userDataBase" />
     <jndiEntry value='"users"'      jndiName="userDataCollection"/>
     <jndiEntry value='"media"'      jndiName="mediaDataCollection"/>
-    <jndiEntry value='"local"' jndiName="environment"/>
+    <jndiEntry value='"cloud"' jndiName="environment"/>
 
 </server>

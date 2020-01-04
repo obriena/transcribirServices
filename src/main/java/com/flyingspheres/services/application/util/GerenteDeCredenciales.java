@@ -2,6 +2,7 @@ package com.flyingspheres.services.application.util;
 
 import com.flyingspheres.services.application.rest.FileUploadService;
 
+import javax.inject.Named;
 import javax.json.*;
 import java.io.InputStream;
 
@@ -17,7 +18,9 @@ import java.io.InputStream;
  * of your equipment and backup of your data, and THE PROVIDER will not be liable for any damages you may suffer in
  * connection with using, modifying, or distributing this SOFTWARE PRODUCT.
  */
-public class GerenteDeCredenciales {
+
+@Named("Archivo")
+public class GerenteDeCredenciales implements GerenteSensible{
 
     private final static String archivoNombre = "/credenciales.txt";
     private static String apiKeyString = null;
@@ -42,12 +45,17 @@ public class GerenteDeCredenciales {
         }
     }
 
-    public static String getApiKeyString(){
+    public String getApiKeyString(){
         return apiKeyString;
     }
 
-    public static String getMongoPwd(){
+    public String getMongoPwd(){
         return mongoPwd;
+    }
+
+    @Override
+    public String getMongoUser() {
+        throw new RuntimeException("Not implemented yet");
     }
 
 }

@@ -1,12 +1,16 @@
 package com.flyingspheres.services.application.cde;
 
 import com.flyingspheres.services.application.util.GerenteDeCredenciales;
+import com.flyingspheres.services.application.util.GerenteSensible;
 import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 
 import javax.annotation.Resource;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class MongoProducer {
 
@@ -22,35 +26,43 @@ public class MongoProducer {
     @Resource( lookup = "mongoConnectString", name = "mongoConnectString")
     String mongoConnectionString; //mongodb+srv://<userId>:<password>@<server>
 
-    @Resource( lookup = "mongoUserId", name = "mongoUserId")
-    String mongoUserId;
-
-    @Resource( lookup = "mongoPassword", name = "mongoPassword")
-    String mongoPassword;
-
     @Resource( lookup = "environment", name = "environment")
     String environment;  //valores válidos cloud o local
+
+    @Inject
+    private @Named("Entorno") GerenteSensible gerenteData;
 
 
     @Produces
     public MongoClient createMongo() {
         MongoClient client = null;
-        if (environment.equalsIgnoreCase("cloud")){
-            String parsedConnection = mongoConnectionString.replace("|", "&");
-            parsedConnection = parsedConnection.replace("{password}", GerenteDeCredenciales.getMongoPwd());
-            System.out.println("Mongo URL: " + parsedConnection);
-            MongoClientURI uri = new MongoClientURI(parsedConnection);
+        System.out.println("Mongo Raw URL: " + mongoConnectionString);
+        try {
+            if (environment.equalsIgnoreCase("cloud")){
+                String parsedConnection = mongoConnectionString.replace("|", "&");
+                parsedConnection = parsedConnection.replace("{mongo_user}", gerenteData.getMongoUser());
+                System.out.println("Parsed Connection: " + parsedConnection);
+                parsedConnection = parsedConnection.replace("{mongo_password}", gerenteData.getMongoPwd());
 
-            client = new MongoClient(uri);
-        } else {
-            client = new MongoClient(new ServerAddress(hostName, port.intValue()), new MongoClientOptions.Builder().build());
+                System.out.println("Mongo URL: " + parsedConnection);
+                MongoClientURI uri = new MongoClientURI(parsedConnection);
+
+                client = new MongoClient(uri);
+            } else {
+                client = new MongoClient(new ServerAddress(hostName, port.intValue()), new MongoClientOptions.Builder().build());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return client;
     }
 
     @Produces
-    public MongoDatabase createDB(MongoClient client) {
+    public MongoDatabase createDB(MongoClient client){
+        if (client == null) {
+            throw new RuntimeException("Mongo Client is null.  Environment is missing variables");
+        }
         System.out.println("Creating database using collection: " + dataBase);
         return client.getDatabase(dataBase);
     }

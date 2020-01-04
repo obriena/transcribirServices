@@ -1,29 +1,24 @@
 package com.flyingspheres.services.application.rest;
 
 
-import com.flyingspheres.services.application.ModelAdaptor;
 import com.flyingspheres.services.application.models.Media;
 import com.flyingspheres.services.application.models.ServerMessage;
 import com.flyingspheres.services.application.util.DataManager;
-import com.flyingspheres.services.application.util.GerenteDeCredenciales;
+import com.flyingspheres.services.application.util.GerenteSensible;
 import com.ibm.cloud.sdk.core.http.HttpMediaType;
 import com.ibm.cloud.sdk.core.service.security.IamOptions;
 import com.ibm.watson.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
-import org.bson.Document;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.json.*;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -33,7 +28,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.crypto.Data;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +40,11 @@ public class FileUploadService {
 
     @Context
     private HttpServletRequest httpRequest;
+
+    @Inject
+    private @Named("Entorno")
+    GerenteSensible gerenteData;
+
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -90,7 +89,7 @@ public class FileUploadService {
             try {
                 SpeechToText service = new SpeechToText();
                 IamOptions options = new IamOptions.Builder()
-                        .apiKey(GerenteDeCredenciales.getApiKeyString())
+                        .apiKey(gerenteData.getApiKeyString())
                         .build();
                 service.setIamCredentials(options);
 //https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-models#models
