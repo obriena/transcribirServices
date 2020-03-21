@@ -21,6 +21,13 @@
               type="JKS"
               password="transcribir" />
 
+<!--    <cors domain="/transcribir"
+          allowedOrigins="http://localhost:4200, https://transcribir.herokuapp.com/"
+          allowedMethods="GET, DELETE, POST"
+          allowedHeaders="origin, content-type, accept, authorization"
+          allowCredentials="true"
+          maxAge="3600" />-->
+
     <!-- Automatically expand WAR files and EAR files -->
     <applicationManager autoExpand="true"/>
 

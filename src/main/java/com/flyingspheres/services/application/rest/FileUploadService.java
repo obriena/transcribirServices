@@ -3,6 +3,8 @@ package com.flyingspheres.services.application.rest;
 
 import com.flyingspheres.services.application.models.Media;
 import com.flyingspheres.services.application.models.ServerMessage;
+import com.flyingspheres.services.application.transcribiendo.Transcribir;
+import com.flyingspheres.services.application.transcribiendo.WatsonTranscribir;
 import com.flyingspheres.services.application.util.DataManager;
 import com.flyingspheres.services.application.util.GerenteSensible;
 import com.ibm.cloud.sdk.core.http.HttpMediaType;
@@ -83,31 +85,21 @@ public class FileUploadService {
                     uploadedBytes = IOUtils.toByteArray(stream);
                 }
             }
-
+            System.out.println("convertir datos a bytes");
             ByteArrayInputStream bis = new ByteArrayInputStream(uploadedBytes);
+            System.out.println("Conversion completa");
 
-            try {
-                SpeechToText service = new SpeechToText();
-                IamOptions options = new IamOptions.Builder()
-                        .apiKey(gerenteData.getApiKeyString())
-                        .build();
-                service.setIamCredentials(options);
-//https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-models#models
+            if (language == null) {
+                System.out.println("Language not set in form using default");
+                language = "es-ES_BroadbandModel";
+            }
 
-                if (language == null) {
-                    System.out.println("Language not set in form using default");
-                    language = "es-ES_BroadbandModel";
-                }
-                RecognizeOptions recognizeOptions = new RecognizeOptions.Builder()
-                        .audio(bis)
-                        .model(language)
-                        .contentType(HttpMediaType.AUDIO_MP3)
-                        .build();
+            Transcribir transcribir = new WatsonTranscribir();
+            ServerMessage tranMessage = transcribir.transcribe(language, bis);
+
+
                 try {
-                    SpeechRecognitionResults transcript = service.recognize(recognizeOptions).execute().getResult();
-                    System.out.println(transcript);
-                    message.setStatus(true);
-                    message.setMessage(transcript.toString());
+
                     Media media = new Media();
                     UUID uid = UUID.randomUUID();
                     media.setMediaId(uid.toString());
@@ -115,7 +107,7 @@ public class FileUploadService {
                     media.setNotas(notas);
                     media.setFileName(fileName);
                     media.setMediaData(uploadedBytes);
-                    media.setTranscription(transcript.toString());
+                    media.setTranscription(tranMessage.getMessage());
                     media.setIdioma(language);
 
                     dataManager.guardarMedia(media);
@@ -127,9 +119,7 @@ public class FileUploadService {
                     message.setStatus(false);
                     message.setMessage(t.getMessage());
                 }
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
+
         } catch (FileUploadException e) {
             e.printStackTrace();
         } catch (IOException e) {

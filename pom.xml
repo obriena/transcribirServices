@@ -43,6 +43,18 @@
         <cf.host>${app.name}</cf.host>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>4.2.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
         <dependency>
@@ -61,6 +73,12 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongoDriverVersion}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- Google API Setup -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-speech</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.openliberty.features/passwordUtilities-1.0 -->
         <dependency>
