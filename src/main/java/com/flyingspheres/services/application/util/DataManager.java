@@ -10,7 +10,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.bson.types.Binary;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -108,7 +107,7 @@ public class DataManager {
         FindIterable<Document> result = mongoDb.getCollection(mediaCollection).find().filter(mediaFilter);
         List<Media> mediaList = new ArrayList<>();
         for (Document doc : result) {
-            mediaList.add(ModelAdaptor.convertDocumentToMedia(doc));
+            mediaList.add(ModelAdaptor.convertDocumentToMediaNoMediaNoTranscript(doc));
         }
         return mediaList;
     }
@@ -130,6 +129,6 @@ public class DataManager {
 
     public void guardarMedia(Media media) {
         MongoCollection<Document> collection = mongoDb.getCollection(mediaCollection);
-        collection.insertOne(ModelAdaptor.convertDocumentToMedia(media));
+        collection.insertOne(ModelAdaptor.convertMediaToDocument(media));
     }
 }

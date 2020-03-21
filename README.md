@@ -26,7 +26,7 @@ docker build -t flyingspheres/transcribirservices:0.1 .
 
 comand a correar la imagen:
 ```
-'docker run -p 9080:9080 -d flyingspheres/transcribirservices:0.1'
+docker run --env-file=docker.env -p 9080:9080 flyingspheres/transcribirservices:0.2
 ```
 
 abierto un linea comando ventana
@@ -38,6 +38,25 @@ push the docker image to github
 ```
 docker push flyingspheres/transcribirservices:0.1
 ```
+
+# Deploying to Heroku
+Heroku solo funciona después de instal las herramientas de línea de comando. 
+
+Cuando corriendo sobre Heroku esta es un variable ambiento llamada PORT.  Esta variable deberia agregar en la archivo: server.xml igual:
+```
+    <httpEndpoint httpPort="${PORT}" httpsPort="${default.https.port}"
+      id="defaultHttpEndpoint" host="*" />
+```
+ 
+```
+ heroku login
+ heroku container:login
+ heroku container:push web -a transcribirservices
+ heroku container:release web -a transcribirservices
+ heroku logs --tail -a transcribirservices
+ heroku open -a transcribirservices
+ ```
+
 
 # Deploying to Cloud Foundry:
 ```

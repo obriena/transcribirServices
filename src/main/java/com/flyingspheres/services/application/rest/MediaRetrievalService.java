@@ -1,5 +1,6 @@
 package com.flyingspheres.services.application.rest;
 
+import com.flyingspheres.services.application.ModelAdaptor;
 import com.flyingspheres.services.application.models.Media;
 import com.flyingspheres.services.application.models.ServerMessage;
 import com.flyingspheres.services.application.util.DataManager;
@@ -23,7 +24,11 @@ public class MediaRetrievalService {
     @Path("/findAllForUser/{userId}")
     @Produces("application/json; charset=UTF-8")
     public Response retrieveMessagesForUser(@PathParam("userId") String userId){
+        long start = System.currentTimeMillis();
+        System.out.println("Retrieving all data for user: " + userId);
         List<Media> mediaList = dataManager.recuperarMediaParaElUsuario(userId);
+        long dataRetrieved = System.currentTimeMillis();
+        System.out.println("Data Retrieved: " + ((dataRetrieved - start)/1000.0));
 
         ServerMessage message = new ServerMessage();
         message.setStatus(true);
@@ -55,6 +60,26 @@ public class MediaRetrievalService {
         };
 
         return Response.ok(stream).build();
+    }
+
+    @GET
+    @Path("/retrieveTranscript/{mediaId}/{userId}")
+    @Produces("application/json; charset=UTF-8")
+    public Response retrieveTranscript(@PathParam("mediaId") String mediaId, @PathParam("userId") String userId) {
+        long start = System.currentTimeMillis();
+        System.out.println("Retrieving media record for user: " + userId);
+        Document document = dataManager.recuperarSoloMediaParaElUsuario(userId, mediaId);
+        long dataRetrieved = System.currentTimeMillis();
+        System.out.println("Data Retrieved: " + ((dataRetrieved - start)/1000.0));
+
+        Media media = ModelAdaptor.convertDocumentToMediaNoMedia(document);
+
+        ServerMessage message = new ServerMessage();
+        message.setStatus(true);
+        message.setMessage("Retrieved One Message");
+        message.setPayload(media);
+
+        return Response.ok(message).build();
     }
 
 

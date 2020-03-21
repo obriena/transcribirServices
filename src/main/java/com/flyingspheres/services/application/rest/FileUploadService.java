@@ -50,6 +50,8 @@ public class FileUploadService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json; charset=UTF-8")
     public Response uploadFile(){
+        long startTime = System.currentTimeMillis();
+        System.out.println("Uploading file: 00:00:00");
         boolean isMultiPart = ServletFileUpload.isMultipartContent(httpRequest);
         String transcripcion = "Transcript failed";
         ServletFileUpload upload = new ServletFileUpload();
@@ -83,16 +85,25 @@ public class FileUploadService {
                     uploadedBytes = IOUtils.toByteArray(stream);
                 }
             }
-
+            long uploadTime = System.currentTimeMillis();
+            long elapsedTime = uploadTime - startTime;
+            System.out.println("File Uploaded: " + (elapsedTime/1000.0));
             ByteArrayInputStream bis = new ByteArrayInputStream(uploadedBytes);
-
+            System.out.printf("Elapsed time to create ByteArrayInputStream: "+ ((System.currentTimeMillis() - uploadTime)/1000.0));
             try {
+                System.out.println("Calling IBM");
+                /*
+                    This should be moved to an Asynchronous request:
+                    https://cloud.ibm.com/docs/speech-to-text?topic=speech-to-text-async
+
+
+                 */
                 SpeechToText service = new SpeechToText();
                 IamOptions options = new IamOptions.Builder()
                         .apiKey(gerenteData.getApiKeyString())
                         .build();
                 service.setIamCredentials(options);
-//https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-models#models
+//          https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-models#models
 
                 if (language == null) {
                     System.out.println("Language not set in form using default");
@@ -105,7 +116,8 @@ public class FileUploadService {
                         .build();
                 try {
                     SpeechRecognitionResults transcript = service.recognize(recognizeOptions).execute().getResult();
-                    System.out.println(transcript);
+                    long ibmComplete = System.currentTimeMillis();
+                    System.out.println("IBM Call completed: " + ((ibmComplete - uploadTime)/1000.0));
                     message.setStatus(true);
                     message.setMessage(transcript.toString());
                     Media media = new Media();
@@ -119,7 +131,8 @@ public class FileUploadService {
                     media.setIdioma(language);
 
                     dataManager.guardarMedia(media);
-
+                    long mongoSave = System.currentTimeMillis();
+                    System.out.println("Mongo Save Complete: " + ((mongoSave - ibmComplete)/1000.0) );
                     //clearing out the data bytes so we don't send them back to the user.
                     media.setMediaData(null);
                     message.setPayload(media);
@@ -135,7 +148,7 @@ public class FileUploadService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        System.out.println("Process Complete total time: " + ((System.currentTimeMillis() - startTime)/1000.0));
         return Response.ok(message).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).header(HttpHeaders.CONTENT_ENCODING, "UTF-8").build();
     }
 }

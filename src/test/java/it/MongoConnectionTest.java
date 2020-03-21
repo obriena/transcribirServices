@@ -20,7 +20,7 @@ public class MongoConnectionTest {
     public void testConnect() {
 
         MongoClientURI uri = new MongoClientURI(
-                "mongodb+srv://transcrib_01:{password}@cluster0-gmcxk.mongodb.net/test?retryWrites=true&w=majority");
+                "mongodb+srv://{MONGO_USER}:{MONGO_PWD}@cluster0-gmcxk.mongodb.net/test?retryWrites=true&w=majority");
 
         MongoClient mongoClient = new MongoClient(uri);
         MongoDatabase database = mongoClient.getDatabase("test");

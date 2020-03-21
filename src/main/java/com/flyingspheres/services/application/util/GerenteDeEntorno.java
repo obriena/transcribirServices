@@ -18,7 +18,6 @@ public class GerenteDeEntorno implements GerenteSensible{
     @Override
     public String getMongoUser() {
         return getEnvironmentVariable("MONGO_USER");
-
     }
 
     private String getEnvironmentVariable(String key){
