@@ -43,7 +43,41 @@
         <cf.host>${app.name}</cf.host>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>4.2.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!-- Google Dependencies -->
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.1-android</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.errorprone/error_prone_annotations -->
+        <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+
+
+
         <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -61,6 +95,12 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongoDriverVersion}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- Google API Setup -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-speech</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.openliberty.features/passwordUtilities-1.0 -->
         <dependency>

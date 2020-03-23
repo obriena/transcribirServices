@@ -3,6 +3,9 @@ package com.flyingspheres.services.application.rest;
 
 import com.flyingspheres.services.application.models.Media;
 import com.flyingspheres.services.application.models.ServerMessage;
+import com.flyingspheres.services.application.transcribiendo.Transcribir;
+import com.flyingspheres.services.application.transcribiendo.WatsonAsyncTranscribir;
+import com.flyingspheres.services.application.transcribiendo.WatsonTranscribir;
 import com.flyingspheres.services.application.util.DataManager;
 import com.flyingspheres.services.application.util.GerenteSensible;
 import com.ibm.cloud.sdk.core.http.HttpMediaType;
@@ -85,67 +88,56 @@ public class FileUploadService {
                     uploadedBytes = IOUtils.toByteArray(stream);
                 }
             }
+
             long uploadTime = System.currentTimeMillis();
             long elapsedTime = uploadTime - startTime;
-            System.out.println("File Uploaded: " + (elapsedTime/1000.0));
+            System.out.println("archivo subido: " + (elapsedTime/1000.0));
+
             ByteArrayInputStream bis = new ByteArrayInputStream(uploadedBytes);
-            System.out.printf("Elapsed time to create ByteArrayInputStream: "+ ((System.currentTimeMillis() - uploadTime)/1000.0));
+            System.out.println("Conversion completa");
+
+            if (language == null) {
+                System.out.println("Language not set in form using default");
+                language = "es-ES_BroadbandModel";
+            }
+
+            UUID uid = UUID.randomUUID();
+            Transcribir transcribir = new WatsonAsyncTranscribir();
+            if (transcribir instanceof  WatsonAsyncTranscribir){
+                ((WatsonAsyncTranscribir) transcribir).setGerenteData(gerenteData);
+                ((WatsonAsyncTranscribir) transcribir).setDataManager(dataManager);
+            }
+
+            ServerMessage tranMessage = transcribir.transcribe(language, bis, uid.toString(), userId);
+
+            message.setStatus(true);
+            message.setMessage(tranMessage.getMessage());
+
+            long asyncRequest = System.currentTimeMillis();
             try {
-                System.out.println("Calling IBM");
-                /*
-                    This should be moved to an Asynchronous request:
-                    https://cloud.ibm.com/docs/speech-to-text?topic=speech-to-text-async
+                Media media = new Media();
+                media.setMediaId(uid.toString());
+                media.setUserId(userId);
+                media.setNotas(notas);
+                media.setFileName(fileName);
+                media.setMediaData(uploadedBytes);
+                media.setTranscription(tranMessage.getMessage());
+                media.setIdioma(language);
 
+                dataManager.guardarMedia(media);
+                long mongoSave = System.currentTimeMillis();
+                System.out.println("Mongo Save Complete: " + ((mongoSave - asyncRequest)/1000.0) );
+                //clearing out the data bytes so we don't send them back to the user.
+                media.setMediaData(null);
+                message.setPayload(media);
 
-                 */
-                SpeechToText service = new SpeechToText();
-                IamOptions options = new IamOptions.Builder()
-                        .apiKey(gerenteData.getApiKeyString())
-                        .build();
-                service.setIamCredentials(options);
-//          https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-models#models
-
-                if (language == null) {
-                    System.out.println("Language not set in form using default");
-                    language = "es-ES_BroadbandModel";
-                }
-                RecognizeOptions recognizeOptions = new RecognizeOptions.Builder()
-                        .audio(bis)
-                        .model(language)
-                        .contentType(HttpMediaType.AUDIO_MP3)
-                        .build();
-                try {
-                    SpeechRecognitionResults transcript = service.recognize(recognizeOptions).execute().getResult();
-                    long ibmComplete = System.currentTimeMillis();
-                    System.out.println("IBM Call completed: " + ((ibmComplete - uploadTime)/1000.0));
-                    message.setStatus(true);
-                    message.setMessage(transcript.toString());
-                    Media media = new Media();
-                    UUID uid = UUID.randomUUID();
-                    media.setMediaId(uid.toString());
-                    media.setUserId(userId);
-                    media.setNotas(notas);
-                    media.setFileName(fileName);
-                    media.setMediaData(uploadedBytes);
-                    media.setTranscription(transcript.toString());
-                    media.setIdioma(language);
-
-                    dataManager.guardarMedia(media);
-                    long mongoSave = System.currentTimeMillis();
-                    System.out.println("Mongo Save Complete: " + ((mongoSave - ibmComplete)/1000.0) );
-                    //clearing out the data bytes so we don't send them back to the user.
-                    media.setMediaData(null);
-                    message.setPayload(media);
-                } catch (Throwable t) {
-                    message.setStatus(false);
-                    message.setMessage(t.getMessage());
-                }
-            } catch (RuntimeException e) {
-                e.printStackTrace();
+            } catch (Throwable t) {
+                message.setStatus(false);
+                message.setMessage(t.getMessage());
             }
         } catch (FileUploadException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException e){
             e.printStackTrace();
         }
         System.out.println("Process Complete total time: " + ((System.currentTimeMillis() - startTime)/1000.0));

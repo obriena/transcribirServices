@@ -83,5 +83,4 @@ public class ModelAdaptor {
         media.setIdioma(mediaDoc.getString("idioma"));
         return media;
     }
-
 }

@@ -1,12 +1,10 @@
 package com.flyingspheres.services.application.cde;
 
-import com.flyingspheres.services.application.util.GerenteDeCredenciales;
 import com.flyingspheres.services.application.util.GerenteSensible;
 import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 
 import javax.annotation.Resource;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;

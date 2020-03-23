@@ -1,12 +1,8 @@
 package com.flyingspheres.services.application.rest;
 
-import com.flyingspheres.services.application.ModelAdaptor;
 import com.flyingspheres.services.application.models.Credentials;
 import com.flyingspheres.services.application.models.ServerMessage;
-import com.flyingspheres.services.application.models.User;
 import com.flyingspheres.services.application.util.DataManager;
-import com.ibm.websphere.crypto.PasswordUtil;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 

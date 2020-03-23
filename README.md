@@ -100,3 +100,6 @@ kubectl create deployment transcribir --image=us.icr.io/flyingspheres/transcribi
 kubectl get deployments
 kubectl expose deployment transcribir --port=9080 --name=transcribir
 service/transcribir exposed
+
+
+## Google Trnascribir Servicios

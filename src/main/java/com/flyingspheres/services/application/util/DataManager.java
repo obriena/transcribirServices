@@ -6,6 +6,7 @@ import com.flyingspheres.services.application.models.Media;
 import com.flyingspheres.services.application.models.ServerMessage;
 import com.flyingspheres.services.application.models.User;
 import com.ibm.websphere.crypto.PasswordUtil;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -130,5 +131,14 @@ public class DataManager {
     public void guardarMedia(Media media) {
         MongoCollection<Document> collection = mongoDb.getCollection(mediaCollection);
         collection.insertOne(ModelAdaptor.convertMediaToDocument(media));
+    }
+
+    public void actualizarDocumento(String userId, String mediaId, BasicDBObject document) {
+        MongoCollection<Document> collection = mongoDb.getCollection(mediaCollection);
+        Document mediaFilter = new Document();
+        mediaFilter.put("userId", userId);
+        mediaFilter.put("mediaId", mediaId);
+
+        collection.updateOne(mediaFilter, document);
     }
 }

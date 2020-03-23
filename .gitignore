@@ -37,4 +37,5 @@ src/main/resources/localdev-config.json
 src/main/resources/credenciales.txt
 docker.env
 
+ibmAsyncNotes.md
 .idea/*
